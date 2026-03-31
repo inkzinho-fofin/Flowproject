@@ -1,0 +1,463 @@
+--// FLOW API CORE 4.0 AI GOD EDITION
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Player = Players.LocalPlayer
+
+local FlowAPI = {}
+
+FlowAPI.Version = "4.0 AI GOD"
+
+FlowAPI.EggIndex = {}
+FlowAPI.RareIndex = {}
+FlowAPI.Ignored = {}
+FlowAPI.ActiveCollect = {}
+
+FlowAPI.Terminal = nil
+
+-- API ONLINE UPDATE
+FlowAPI.UpdateURL =
+"https://raw.githubusercontent.com/flowapi/flow/main/api.lua"
+
+-- BLACKLIST
+FlowAPI.Blacklist = {
+
+    "npc",
+    "shop",
+    "vendor",
+    "seller",
+    "pet",
+    "accessory",
+    "character",
+    "player",
+    "dummy",
+    "gui",
+    "button",
+    "ui",
+    "crate",
+    "box"
+
+}
+
+-- PRIORIDADE
+FlowAPI.Rarity = {
+
+    secret = 100,
+    mythic = 90,
+    divine = 85,
+    god = 80,
+    legendary = 70,
+    rainbow = 65,
+    diamond = 60,
+    epic = 50,
+    rare = 40,
+    uncommon = 30,
+    common = 10
+
+}
+
+-- TERMINAL
+function FlowAPI:Log(text,color)
+
+    if not self.Terminal then return end
+    self.Terminal(text,color)
+
+end
+
+-- AUTO UPDATE
+function FlowAPI:CheckUpdate()
+
+    task.spawn(function()
+
+        while task.wait(120) do
+
+            pcall(function()
+
+                local code =
+                game:HttpGet(self.UpdateURL)
+
+                if code
+                and not string.find(code,self.Version) then
+
+                    self:Log("Atualizando API...")
+
+                    loadstring(code)()
+
+                end
+
+            end)
+
+        end
+
+    end)
+
+end
+
+-- ANTI DETECÇÃO
+function FlowAPI:AntiDetection()
+
+    task.spawn(function()
+
+        while task.wait(math.random(.5,2)) do
+
+            pcall(function()
+
+                local root =
+                Player.Character
+                and Player.Character:FindFirstChild("HumanoidRootPart")
+
+                if root then
+
+                    root.Velocity =
+                    Vector3.new()
+
+                    root.RotVelocity =
+                    Vector3.new()
+
+                end
+
+            end)
+
+        end
+
+    end)
+
+end
+
+-- BLACKLIST
+function FlowAPI:IsBlacklisted(obj)
+
+    local name = obj.Name:lower()
+
+    for _,word in pairs(self.Blacklist) do
+        if string.find(name,word) then
+            return true
+        end
+    end
+
+    local model = obj:FindFirstAncestorOfClass("Model")
+
+    if model and model:FindFirstChildWhichIsA("Humanoid") then
+        return true
+    end
+
+    if obj:FindFirstAncestorOfClass("Accessory") then
+        return true
+    end
+
+    if obj:FindFirstAncestorOfClass("Tool") then
+        return true
+    end
+
+end
+
+-- RARIDADE
+function FlowAPI:GetRarity(obj)
+
+    local name = obj.Name:lower()
+
+    for rarity,value in pairs(self.Rarity) do
+        if string.find(name,rarity) then
+            return value
+        end
+    end
+
+    return 1
+
+end
+
+-- DETECTOR
+function FlowAPI:IsEgg(obj)
+
+    if not obj then return end
+    if self:IsBlacklisted(obj) then return end
+
+    local name = obj.Name:lower()
+
+    local keywords = {
+
+        "egg",
+        "ovo",
+        "gift",
+        "reward",
+        "token",
+        "artifact",
+        "drop",
+        "event"
+
+    }
+
+    for _,word in pairs(keywords) do
+        if string.find(name,word) then
+            return true
+        end
+    end
+
+end
+
+-- IGNORE
+function FlowAPI:Ignore(obj,time)
+
+    self.Ignored[obj] =
+    tick() + (time or 5)
+
+end
+
+function FlowAPI:IsIgnored(obj)
+
+    return self.Ignored[obj]
+    and tick() < self.Ignored[obj]
+
+end
+
+-- TWEEN
+function FlowAPI:TweenTo(position)
+
+    local root =
+    Player.Character
+    and Player.Character:FindFirstChild("HumanoidRootPart")
+
+    if not root then return end
+
+    local dist =
+    (root.Position-position).Magnitude
+
+    local tween =
+    TweenService:Create(
+
+        root,
+
+        TweenInfo.new(
+            math.clamp(dist/250,.05,2),
+            Enum.EasingStyle.Linear
+        ),
+
+        {CFrame = CFrame.new(position)}
+
+    )
+
+    tween:Play()
+    tween.Completed:Wait()
+
+end
+
+-- SERVER BYPASS
+function FlowAPI:ServerCollect(obj)
+
+    for _,v in pairs(obj:GetDescendants()) do
+
+        pcall(function()
+
+            if v:IsA("RemoteEvent") then
+                v:FireServer()
+            end
+
+            if v:IsA("RemoteFunction") then
+                v:InvokeServer()
+            end
+
+            if v:IsA("ProximityPrompt") then
+                fireproximityprompt(v)
+            end
+
+            if v:IsA("ClickDetector") then
+                fireclickdetector(v)
+            end
+
+        end)
+
+    end
+
+    -- ReplicatedStorage bypass
+
+    for _,v in pairs(ReplicatedStorage:GetDescendants()) do
+
+        if v:IsA("RemoteEvent") then
+            pcall(function()
+                v:FireServer(obj)
+            end)
+        end
+
+    end
+
+end
+
+-- MULTI COLETA
+function FlowAPI:Collect(obj)
+
+    if not obj then return end
+    if self:IsIgnored(obj) then return end
+    if self.ActiveCollect[obj] then return end
+
+    self.ActiveCollect[obj] = true
+
+    task.spawn(function()
+
+        local part =
+        obj:IsA("BasePart")
+        and obj
+        or obj:FindFirstChildWhichIsA("BasePart",true)
+
+        if not part then return end
+
+        self:Log("AI Multi Coleta "..obj.Name)
+
+        self:TweenTo(part.Position)
+
+        firetouchinterest(
+            Player.Character.HumanoidRootPart,
+            part,
+            0
+        )
+
+        firetouchinterest(
+            Player.Character.HumanoidRootPart,
+            part,
+            1
+        )
+
+        self:ServerCollect(obj)
+
+        self:Ignore(obj)
+        self.ActiveCollect[obj] = nil
+
+    end)
+
+end
+
+-- SCAN
+function FlowAPI:Add(obj)
+
+    if not self:IsEgg(obj) then return end
+
+    self.EggIndex[obj] = true
+
+    local rarity =
+    self:GetRarity(obj)
+
+    if rarity > 40 then
+        self.RareIndex[obj] = rarity
+    end
+
+    self:Log("AI Detectou "..obj.Name)
+
+end
+
+function FlowAPI:Remove(obj)
+
+    self.EggIndex[obj] = nil
+    self.RareIndex[obj] = nil
+
+end
+
+-- IA
+function FlowAPI:Think()
+
+    local best
+    local rarity = 0
+
+    for egg,value in pairs(self.RareIndex) do
+
+        if value > rarity
+        and not self:IsIgnored(egg) then
+
+            best = egg
+            rarity = value
+
+        end
+
+    end
+
+    if best then return best end
+
+    return self:GetNearest()
+
+end
+
+-- RADAR
+function FlowAPI:GetNearest()
+
+    local root =
+    Player.Character
+    and Player.Character:FindFirstChild("HumanoidRootPart")
+
+    if not root then return end
+
+    local closest
+    local dist = math.huge
+
+    for egg in pairs(self.EggIndex) do
+
+        local part =
+        egg:FindFirstChildWhichIsA("BasePart",true)
+
+        if part then
+
+            local d =
+            (root.Position-part.Position).Magnitude
+
+            if d < dist then
+                dist = d
+                closest = egg
+            end
+
+        end
+
+    end
+
+    return closest
+
+end
+
+-- MULTI AI
+function FlowAPI:StartAI()
+
+    task.spawn(function()
+
+        while task.wait(.15) do
+
+            for i = 1,3 do
+
+                local target =
+                self:Think()
+
+                if target then
+                    self:Collect(target)
+                end
+
+            end
+
+        end
+
+    end)
+
+end
+
+-- INIT
+function FlowAPI:Init()
+
+    for _,v in pairs(workspace:GetDescendants()) do
+        self:Add(v)
+    end
+
+    workspace.DescendantAdded:Connect(function(v)
+        self:Add(v)
+    end)
+
+    workspace.DescendantRemoving:Connect(function(v)
+        self:Remove(v)
+    end)
+
+    self:CheckUpdate()
+    self:AntiDetection()
+    self:StartAI()
+
+    self:Log("Flow AI GOD Engine iniciado")
+
+end
+
+return FlowAPI
