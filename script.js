@@ -480,7 +480,7 @@ get("connectDiscordButton").addEventListener(
         if (!window.location.protocol.startsWith("http")) {
 
             get("discordConnectionMessage").textContent =
-                "A conexão OAuth precisa do site aberto pelo servidor configurado.";
+                "Esta página foi aberta como arquivo. Inicie o servidor com npm start e acesse http://localhost:3000; o OAuth não funciona em file://.";
 
             return;
 
@@ -1187,7 +1187,7 @@ async function restoreDiscordSession() {
             cancelled:
                 "A conexão com o Discord foi cancelada.",
             not_configured:
-                "Configure as variáveis OAuth do Discord no servidor.",
+                "OAuth do Discord não configurado. Defina DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET e DISCORD_REDIRECT_URI no arquivo .env, usando /auth/discord/callback como callback, e inicie o site com npm start.",
             invalid_state:
                 "A conexão expirou. Tente conectar novamente.",
             oauth_failed:
@@ -1198,6 +1198,8 @@ async function restoreDiscordSession() {
         get("discordConnectionMessage").textContent =
             errorMessages[authError] ||
             errorMessages.oauth_failed;
+
+        showPage("registerPage");
 
         window.history.replaceState(
             {},
