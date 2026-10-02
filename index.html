@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Desafio de Natal - Blox Fruits"
+    >
+
+    <title>Desafio de Natal | Blox Fruits</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================================================
+         SISTEMA PRINCIPAL
+         ========================================================= -->
+
+    <main id="app">
+
+        <!-- =====================================================
+             PÁGINA INICIAL
+             ===================================================== -->
+
+        <section
+            id="homePage"
+            class="page active"
+        >
+
+            <div class="home-container">
+
+                <div class="home-logo">
+                    🍎
+                </div>
+
+                <h1>
+                    Desafio de Natal
+                </h1>
+
+                <p class="subtitle">
+                    Blox Fruits
+                </p>
+
+                <p class="description">
+                    Apenas um jogador poderá conquistar
+                    o melhor presente de Natal.
+                </p>
+
+                <div class="home-buttons">
+
+                    <button
+                        id="openPlayerButton"
+                        class="primary-button"
+                        type="button"
+                    >
+                        🎮 Entrar no Desafio
+                    </button>
+
+                    <button
+                        id="openDevButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        🛠️ Acesso DEV
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             REGISTRO DO JOGADOR
+             ===================================================== -->
+
+        <section
+            id="registerPage"
+            class="page"
+        >
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <span class="panel-icon">
+                        🎮
+                    </span>
+
+                    <h2>
+                        Entrar no Desafio
+                    </h2>
+
+                    <p>
+                        Cadastre seus dados para entrar na disputa.
+                    </p>
+
+                </div>
+
+
+                <form id="registerForm">
+
+                    <div class="input-group">
+
+                        <label>
+                            Conta do Discord
+                        </label>
+
+                        <button
+                            id="connectDiscordButton"
+                            class="secondary-button discord-connect-button"
+                            type="button"
+                        >
+                            🔗 Conectar com Discord
+                        </button>
+
+                        <div
+                            id="discordIdentity"
+                            class="discord-identity"
+                            hidden
+                        >
+                            <div>
+                                <strong id="discordUsername"></strong>
+                                <small>ID: <span id="discordUserId"></span></small>
+                            </div>
+
+                            <button
+                                id="disconnectDiscordButton"
+                                class="discord-disconnect-button"
+                                type="button"
+                            >
+                                Desconectar
+                            </button>
+                        </div>
+
+                        <small
+                            id="discordConnectionMessage"
+                            aria-live="polite"
+                        >
+                            Conecte uma conta Discord para confirmar sua identidade.
+                        </small>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="playerNick">
+                            Nome / Apelido
+                        </label>
+
+                        <input
+                            id="playerNick"
+                            type="text"
+                            autocomplete="off"
+                            placeholder="Digite seu apelido"
+                            maxlength="20"
+                            minlength="2"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        id="joinGameButton"
+                        class="primary-button"
+                        type="submit"
+                        disabled
+                    >
+                        🚀 Entrar na Sala
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="registerMessage"
+                    class="message"
+                    aria-live="polite"
+                ></div>
+
+
+                <button
+                    id="backFromRegister"
+                    class="back-button"
+                    type="button"
+                >
+                    ← Voltar
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             LOBBY
+             ===================================================== -->
+
+        <section
+            id="lobbyPage"
+            class="page"
+        >
+
+            <div class="panel lobby-panel">
+
+                <div class="panel-header">
+
+                    <span class="panel-icon">
+                        🏆
+                    </span>
+
+                    <h2>
+                        Sala de Desafio
+                    </h2>
+
+                    <p>
+                        A partida começa quando houver pelo menos
+                        3 jogadores.
+                    </p>
+
+                </div>
+
+
+                <!-- STATUS ONLINE -->
+
+                <div
+                    id="onlineIndicator"
+                    class="online-indicator"
+                >
+                    <span class="online-dot"></span>
+
+                    <span>
+                        Jogadores online:
+                    </span>
+
+                    <strong id="onlineCount">
+                        0
+                    </strong>
+                </div>
+
+
+                <!-- LISTA DE JOGADORES -->
+
+                <div class="section-title">
+                    👥 Jogadores
+                </div>
+
+                <div
+                    id="playerList"
+                    class="player-list"
+                ></div>
+
+
+                <!-- MENSAGEM -->
+
+                <div
+                    id="lobbyMessage"
+                    class="message"
+                    aria-live="polite"
+                ></div>
+
+
+                <!-- BOTÕES -->
+
+                <div class="lobby-actions">
+
+                    <button
+                        id="startGameButton"
+                        class="primary-button"
+                        type="button"
+                        disabled
+                    >
+                        🎯 Iniciar Desafio
+                    </button>
+
+                    <button
+                        id="startRaceButton"
+                        class="secondary-button"
+                        type="button"
+                        disabled
+                    >
+                        🏁 Corrida da Arena
+                    </button>
+
+                    <button
+                        id="leaveLobbyButton"
+                        class="back-button"
+                        type="button"
+                    >
+                        🚪 Sair da Sala
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             QUIZ
+             ===================================================== -->
+
+        <section
+            id="quizPage"
+            class="page"
+        >
+
+            <div class="quiz-container">
+
+                <!-- TOPO DO QUIZ -->
+
+                <div class="quiz-top">
+
+                    <div
+                        id="difficultyBadge"
+                        class="difficulty-badge"
+                    >
+                        FÁCIL
+                    </div>
+
+                    <div
+                        id="questionNumber"
+                        class="question-number"
+                    >
+                        Pergunta 1/10
+                    </div>
+
+                    <div
+                        id="questionTimer"
+                        class="question-timer"
+                    >
+                        ⏱️ 20s
+                    </div>
+
+                </div>
+
+
+                <!-- PROGRESSO -->
+
+                <div class="progress-container">
+
+                    <div class="progress-track">
+
+                        <div
+                            id="quizProgress"
+                            class="progress-bar"
+                            style="width: 10%;"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PERGUNTA -->
+
+                <div class="question-card">
+
+                    <h2
+                        id="questionText"
+                    >
+                        Carregando pergunta...
+                    </h2>
+
+                </div>
+
+
+                <!-- RESPOSTAS -->
+
+                <div
+                    id="answerList"
+                    class="answer-list"
+                ></div>
+
+
+                <!-- MENSAGEM -->
+
+                <div
+                    id="quizMessage"
+                    class="message"
+                    aria-live="polite"
+                ></div>
+
+                <button
+                    id="exitDevTestButton"
+                    class="back-button"
+                    type="button"
+                    hidden
+                >
+                    ← Sair do teste e voltar ao painel DEV
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRONTIDAO PARA A ARENA -->
+
+        <section
+            id="bladeReadyPage"
+            class="page"
+        >
+
+            <div class="panel blade-ready-panel">
+
+                <div class="panel-header">
+                    <span class="panel-icon" id="readyModeIcon">⚔️</span>
+                    <h2 id="readyModeTitle">Todos estão prontos?</h2>
+                    <p id="readyModeDescription">Depois da confirmação de todos, começa a arena 3D com 5 rodadas.</p>
+                </div>
+
+                <div class="ready-summary">
+                    <strong id="bladeReadyCount">0 / 3</strong>
+                    <span id="bladeReadyStatus">Conectando à sala...</span>
+                </div>
+
+                <div
+                    id="bladeReadyPlayers"
+                    class="ready-player-list"
+                    aria-live="polite"
+                ></div>
+
+                <button
+                    id="bladeReadyButton"
+                    class="primary-button"
+                    type="button"
+                    disabled
+                >
+                    Estou pronto
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ARENA 3D -->
+
+        <section
+            id="bladeArenaPage"
+            class="page blade-arena-page"
+        >
+
+            <canvas id="bladeArenaCanvas" aria-label="Arena 3D"></canvas>
+
+            <div class="arena-hud">
+                <div id="arenaRoundStatus" class="arena-round-status">
+                    <strong id="arenaRoundLabel">Rodada 1 / 5</strong>
+                    <span id="arenaPhaseLabel">Preparando arena</span>
+                </div>
+
+                <div id="raceHud" class="race-hud" hidden>
+                    <strong id="raceProgressLabel">Checkpoint 0 / 5</strong>
+                    <span id="boostStatusLabel">Impulso pronto</span>
+                </div>
+
+                <div
+                    id="arenaAnnouncement"
+                    class="arena-announcement"
+                    aria-live="polite"
+                ></div>
+            </div>
+
+            <div class="desktop-parry-hint">
+                F para rebater · alcance de 2 m
+            </div>
+
+            <div id="raceCompleteOverlay" class="race-complete-overlay" hidden>
+                <div class="race-complete-panel">
+                    <strong id="raceCompletePanel">Corrida concluída</strong>
+                    <div id="raceFinishRanking" class="race-finish-ranking"></div>
+                </div>
+            </div>
+
+            <div class="mobile-arena-controls">
+                <div
+                    id="arenaJoystick"
+                    class="arena-joystick"
+                    role="application"
+                    aria-label="Joystick para mover o personagem"
+                >
+                    <div id="arenaJoystickThumb" class="arena-joystick-thumb"></div>
+                </div>
+
+                <button
+                    id="mobileParryButton"
+                    class="mobile-parry-button"
+                    type="button"
+                    aria-label="Rebater a bola"
+                >
+                    Rebater
+                    <small>2 m</small>
+                </button>
+            </div>
+
+            <button
+                id="exitDevBladeBotTestButton"
+                class="dev-blade-test-exit"
+                type="button"
+                hidden
+            >
+                ← Sair do teste
+            </button>
+
+        </section>
+
+
+        <!-- =====================================================
+             RESULTADO
+             ===================================================== -->
+
+        <section
+            id="resultPage"
+            class="page"
+        >
+
+            <div class="panel result-panel">
+
+                <div class="panel-header">
+
+                    <span class="panel-icon">
+                        🎁
+                    </span>
+
+                    <h2 id="resultTitle">
+                        Desafio Finalizado!
+                    </h2>
+
+                    <p id="resultSubtitle">
+                        Confira sua pontuação.
+                    </p>
+
+                </div>
+
+
+                <!-- PONTUAÇÃO -->
+
+                <div id="quizScoreBox" class="score-box">
+
+                    <span class="score-label">
+                        Sua pontuação
+                    </span>
+
+                    <strong
+                        id="playerScore"
+                        class="player-score"
+                    >
+                        0
+                    </strong>
+
+                    <span class="score-points">
+                        pontos
+                    </span>
+
+                </div>
+
+
+                <div class="score-box blade-score-box">
+                    <span class="score-label">Rodadas vencidas</span>
+                    <strong id="playerBladeWins" class="player-score">0 / 5</strong>
+                    <span id="bladeResultMessage" class="score-points">Arena Blade Ball</span>
+                </div>
+
+
+                <!-- RESULTADO -->
+
+                <div
+                    id="resultMessage"
+                    class="result-message"
+                ></div>
+
+
+                <!-- RANKING -->
+
+                <div id="questionResultTitle" class="section-title">
+                    🏆 Resultado dos jogadores
+                </div>
+
+                <div
+                    id="resultPlayerList"
+                    class="result-player-list"
+                ></div>
+
+
+                <div
+                    id="bladeResultRanking"
+                    class="blade-result-ranking"
+                    hidden
+                >
+                    <div class="section-title">⚔️ Vitórias na arena</div>
+                    <div id="bladeResultPlayerList" class="result-player-list"></div>
+                </div>
+
+
+                <button
+                    id="backHomeButton"
+                    class="primary-button"
+                    type="button"
+                >
+                    🏠 Voltar ao Início
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             LOGIN DEV
+             ===================================================== -->
+
+        <section
+            id="devLoginPage"
+            class="page"
+        >
+
+            <div class="panel dev-login-panel">
+
+                <div class="panel-header">
+
+                    <span class="panel-icon">
+                        🔐
+                    </span>
+
+                    <h2>
+                        Área DEV
+                    </h2>
+
+                    <p>
+                        Digite a senha para acessar o painel.
+                    </p>
+
+                </div>
+
+
+                <form id="devLoginForm">
+
+                    <div class="input-group">
+
+                        <label for="devPassword">
+                            Senha DEV
+                        </label>
+
+                        <input
+                            id="devPassword"
+                            type="password"
+                            autocomplete="off"
+                            placeholder="Digite a senha"
+                        >
+
+                    </div>
+
+
+                    <button
+                        id="devLoginButton"
+                        class="primary-button"
+                        type="submit"
+                    >
+                        🔓 Entrar
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="devLoginMessage"
+                    class="message"
+                    aria-live="polite"
+                ></div>
+
+
+                <button
+                    id="backFromDevLogin"
+                    class="back-button"
+                    type="button"
+                >
+                    ← Voltar
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             PAINEL DEV
+             ===================================================== -->
+
+        <section
+            id="devPage"
+            class="page"
+        >
+
+            <div class="dev-container">
+
+                <!-- CABEÇALHO -->
+
+                <div class="dev-header">
+
+                    <div>
+
+                        <span class="dev-label">
+                            🛠️ DEV PANEL
+                        </span>
+
+                        <h2>
+                            Painel dev
+                        </h2>
+
+                        <p>
+                            Controle e monitore o desafio.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        id="devOnlineBadge"
+                        class="dev-online-badge"
+                    >
+                        <span class="online-dot"></span>
+                        ONLINE
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ESTATÍSTICAS
+                     ================================================= -->
+
+                <div class="dev-stats">
+
+                    <div class="dev-stat-card">
+
+                        <span>
+                            👥
+                        </span>
+
+                        <strong id="devOnlinePlayers">
+                            0
+                        </strong>
+
+                        <small>
+                            Jogadores Online
+                        </small>
+
+                    </div>
+
+
+                    <div class="dev-stat-card">
+
+                        <span>
+                            ⭐
+                        </span>
+
+                        <strong id="devTotalPoints">
+                            0
+                        </strong>
+
+                        <small>
+                            Pontos Totais
+                        </small>
+
+                    </div>
+
+
+                    <div class="dev-stat-card">
+
+                        <span>
+                            🏆
+                        </span>
+
+                        <strong id="devHighestScore">
+                            0
+                        </strong>
+
+                        <small>
+                            Maior Pontuação
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACOMPANHAMENTO DA PARTIDA -->
+
+                <div class="dev-panel-card match-monitor-card">
+
+                    <div class="dev-panel-title">
+                        <div>
+                            📡 Acompanhamento da partida
+                        </div>
+
+                        <strong
+                            id="devMatchStatus"
+                            class="match-status"
+                            data-state="waiting"
+                        >
+                            Aguardando
+                        </strong>
+                    </div>
+
+                    <div class="match-monitor-stats">
+
+                        <div class="match-monitor-stat">
+                            <small>Pergunta</small>
+                            <strong id="devMatchQuestionNumber">0 / 10</strong>
+                        </div>
+
+                        <div class="match-monitor-stat">
+                            <small>Tempo</small>
+                            <strong id="devMatchTimer">--</strong>
+                        </div>
+
+                        <div class="match-monitor-stat">
+                            <small>Pontuação</small>
+                            <strong id="devMatchScore">--</strong>
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="match-progress-track"
+                        role="progressbar"
+                        aria-label="Progresso da partida"
+                        aria-valuemin="0"
+                        aria-valuemax="10"
+                        aria-valuenow="0"
+                    >
+                        <div
+                            id="devMatchProgressBar"
+                            class="match-progress-bar"
+                        ></div>
+                    </div>
+
+                    <div class="match-question-preview">
+                        <span id="devMatchDifficulty">Aguardando partida</span>
+                        <p id="devMatchQuestion">
+                            A pergunta atual aparecerá aqui quando o desafio começar.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="dev-panel-card dev-test-card">
+
+                    <div class="dev-panel-title">
+                        <div>🧪 Teste individual</div>
+                    </div>
+
+                    <p class="dev-test-description">
+                        Inicie uma partida solo sem registrar jogadores ou pontos no desafio oficial.
+                    </p>
+
+                    <button
+                        id="startDevTestButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        🎮 Testar o jogo sozinho
+                    </button>
+
+                    <button
+                        id="startDevBladeBotTestButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        ⚔️ Testar Blade Ball contra bots
+                    </button>
+
+                    <button
+                        id="startDevRaceBotTestButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        🏁 Testar corrida contra bots
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                     JOGADORES
+                     ================================================= -->
+
+                <div class="dev-panel-card">
+
+                    <div class="dev-panel-title">
+
+                        <div>
+                            👥 Jogadores
+                        </div>
+
+                    </div>
+
+                    <div
+                        id="devPlayerList"
+                        class="dev-player-list"
+                    ></div>
+
+                </div>
+
+
+                <!-- =================================================
+                     NOTIFICAÇÕES
+                     ================================================= -->
+
+                <div class="dev-panel-card">
+
+                    <div class="dev-panel-title">
+
+                        <div>
+                            📢 Enviar Notificação
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="notificationText">
+                            Mensagem
+                        </label>
+
+                        <textarea
+                            id="notificationText"
+                            rows="4"
+                            maxlength="500"
+                            placeholder="Digite a mensagem que deseja enviar..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="notification-actions">
+
+                        <button
+                            id="notifyAllButton"
+                            class="primary-button"
+                            type="button"
+                        >
+                            📢 Enviar para Todos
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="notificationMessage"
+                        class="message"
+                        aria-live="polite"
+                    ></div>
+
+                </div>
+
+
+                <!-- =================================================
+                     HISTÓRICO
+                     ================================================= -->
+
+                <div class="dev-panel-card">
+
+                    <div class="dev-panel-title">
+
+                        <div>
+                            📜 Histórico de Notificações
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="notificationHistory"
+                        class="notification-history"
+                    ></div>
+
+                </div>
+
+
+                <!-- SAIR -->
+
+                <button
+                    id="devLogoutButton"
+                    class="danger-button"
+                    type="button"
+                >
+                    🚪 Sair do Painel DEV
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         TOAST / NOTIFICAÇÕES
+         ========================================================= -->
+
+    <div
+        id="toast"
+        class="toast"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script
+        type="module"
+        src="script.js"
+    ></script>
+
+</body>
+</html>
+
